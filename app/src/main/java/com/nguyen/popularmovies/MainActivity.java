@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
    List<Movie> mMovies = new ArrayList<>();
    // bind data source to adapter
    RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mMovies);
+   int mPage = 1;
+   enum SortCriteria { LATEST, NOW_PLAYING, POPULAR, TOP_RATED, UPCOMING }
+   SortCriteria mCriteria = SortCriteria.POPULAR;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +47,34 @@ public class MainActivity extends AppCompatActivity {
       RecyclerView listView = (RecyclerView)findViewById(R.id.recycler_view);
       // attach the adapter to the RecyclerView to populate items
       listView.setAdapter(mAdapter);
+      GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2);
       // set layout manager to position the items
-      listView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
+      listView.setLayoutManager(layoutManager);
+      // add scroll listener
+      listView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
+         @Override
+         public void onLoadMore(int page, int totalItemsCount) {
+            // triggered only when new data needs to be appended to the list
+            // add whatever code is needed to append new items to the bottom of the list
+            mPage++;
+            switch (mCriteria) {
+               case LATEST:
+                  break;
+               case NOW_PLAYING:
+                  break;
+               case POPULAR:
+                  getPopularMovies(mPage);
+                  break;
+               case TOP_RATED:
+                  getTopRatedMovies(mPage);
+                  break;
+               case UPCOMING:
+                  break;
+            }
+         }
+      });
       // load data into view
-      getPopularMovies(1);
+      // getPopularMovies(mPage);
 
       // set up Spinner on screen by populating the drop-down list
       Spinner sortOrder = (Spinner)findViewById(R.id.sort_order);
@@ -57,16 +85,34 @@ public class MainActivity extends AppCompatActivity {
       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
       // apply the adapter to the spinner
       sortOrder.setAdapter(adapter);
-      // set the Spinner to the pre-selected Sort Order
-      // sortOrder.setSelection(adapter.getPosition(mSettings.sortOrder));
+      // set the Spinner to the "Popular" sort criteria by default
+      sortOrder.setSelection(adapter.getPosition("Popular"));
       sortOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
          @Override
          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            // mSettings.sortOrder = position == 0 ? null : parent.getItemAtPosition(position).toString();
-            if (position == 0)
-               getPopularMovies(1);
-            else
-               getTopRatedMovies(1);
+            mPage = 1;
+            switch (position) {
+               case 0:
+                  mCriteria = SortCriteria.LATEST;
+                  // getLatestMovies(mPage);
+                  break;
+               case 1:
+                  mCriteria = SortCriteria.NOW_PLAYING;
+                  // getNowPlayingMovies(mPage);
+                  break;
+               case 2:
+                  mCriteria = SortCriteria.POPULAR;
+                  getPopularMovies(mPage);
+                  break;
+               case 3:
+                  mCriteria = SortCriteria.TOP_RATED;
+                  getTopRatedMovies(mPage);
+                  break;
+               case 4:
+                  mCriteria = SortCriteria.UPCOMING;
+                  // getUpcomingMovies(mPage);
+                  break;
+            }
          }
          @Override
          public void onNothingSelected(AdapterView<?> parent) {
@@ -74,31 +120,34 @@ public class MainActivity extends AppCompatActivity {
       });
    }
 
-   private void getPopularMovies(int page) {
+   private void getPopularMovies(final int page) {
       mClient.getPopularMovies(page, new JsonHttpResponseHandler() {
          @Override
          public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-            reloadList(response);
+            reloadList(page, response);
          }
       });
    }
 
-   private void getTopRatedMovies(int page) {
+   private void getTopRatedMovies(final int page) {
       mClient.getTopRatedMovies(page, new JsonHttpResponseHandler() {
          @Override
          public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-            reloadList(response);
+            reloadList(page, response);
          }
       });
    }
 
-   private void reloadList(JSONObject response) {
-      // empty the current list
+   private void reloadList(int page, JSONObject response) {
+      // if this is a new request, empty the current list
       int size = mAdapter.getItemCount();
-      mMovies.clear();
-      mAdapter.notifyItemRangeRemoved(0, size);
-      // add all new movies to the empty list
+      if (page == 1 && size != 0) {
+         mMovies.clear();
+         mAdapter.notifyItemRangeRemoved(0, size-1);
+      }
+      // add all new movies to the current list
+      size = mAdapter.getItemCount();
       mMovies.addAll(Movie.fromJSONArray(response));
-      mAdapter.notifyItemRangeInserted(0, mMovies.size());
+      mAdapter.notifyItemRangeInserted(size, mMovies.size()-1);
    }
 }
