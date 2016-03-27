@@ -3,20 +3,25 @@ package com.nguyen.popularmovies;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by My on 3/26/2016.
  */
-public class Movie implements Serializable {
+@Parcel
+public class Movie {
    String originalTitle;
    String posterPath;
    String overview;
    double voteAverage;
    String releaseDate;
+
+   // empty constructor required by the Parceler library
+   public Movie() {
+   }
 
    public static Movie fromJSONObject(JSONObject jsonObject) {
       Movie movie = new Movie();
