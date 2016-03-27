@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.Spinner;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -45,20 +49,58 @@ public class MainActivity extends AppCompatActivity {
       listView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
       // load data into view
       getPopularMovies();
+
+      // set up Spinner on screen by populating the drop-down list
+      Spinner sortOrder = (Spinner)findViewById(R.id.sort_order);
+      // create an ArrayAdapter using sort_order_array and a default spinner layout
+      ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+            R.array.sort_order_array, android.R.layout.simple_spinner_item);
+      // specify the layout to use when the list of choices appears
+      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+      // apply the adapter to the spinner
+      sortOrder.setAdapter(adapter);
+      // set the Spinner to the pre-selected Sort Order
+      // sortOrder.setSelection(adapter.getPosition(mSettings.sortOrder));
+      sortOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+         @Override
+         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // mSettings.sortOrder = position == 0 ? null : parent.getItemAtPosition(position).toString();
+            if (position == 0)
+               getPopularMovies();
+            else
+               getTopRatedMovies();
+         }
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {
+         }
+      });
    }
 
    private void getPopularMovies() {
       mClient.getPopularMovies(new JsonHttpResponseHandler() {
          @Override
          public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-            // empty the current list
-            int size = mAdapter.getItemCount();
-            mMovies.clear();
-            mAdapter.notifyItemRangeRemoved(0, size);
-            // add all new movies to the empty list
-            mMovies.addAll(Movie.fromJSONArray(response));
-            mAdapter.notifyItemRangeInserted(0, mMovies.size());
+            reloadList(response);
          }
       });
+   }
+
+   private void getTopRatedMovies() {
+      mClient.getTopRatedMovies(new JsonHttpResponseHandler() {
+         @Override
+         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            reloadList(response);
+         }
+      });
+   }
+
+   private void reloadList(JSONObject response) {
+      // empty the current list
+      int size = mAdapter.getItemCount();
+      mMovies.clear();
+      mAdapter.notifyItemRangeRemoved(0, size);
+      // add all new movies to the empty list
+      mMovies.addAll(Movie.fromJSONArray(response));
+      mAdapter.notifyItemRangeInserted(0, mMovies.size());
    }
 }
