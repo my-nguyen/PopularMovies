@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
       // set layout manager to position the items
       listView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
       // load data into view
-      getPopularMovies();
+      getPopularMovies(1);
 
       // set up Spinner on screen by populating the drop-down list
       Spinner sortOrder = (Spinner)findViewById(R.id.sort_order);
@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             // mSettings.sortOrder = position == 0 ? null : parent.getItemAtPosition(position).toString();
             if (position == 0)
-               getPopularMovies();
+               getPopularMovies(1);
             else
-               getTopRatedMovies();
+               getTopRatedMovies(1);
          }
          @Override
          public void onNothingSelected(AdapterView<?> parent) {
@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
       });
    }
 
-   private void getPopularMovies() {
-      mClient.getPopularMovies(new JsonHttpResponseHandler() {
+   private void getPopularMovies(int page) {
+      mClient.getPopularMovies(page, new JsonHttpResponseHandler() {
          @Override
          public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
             reloadList(response);
@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
       });
    }
 
-   private void getTopRatedMovies() {
-      mClient.getTopRatedMovies(new JsonHttpResponseHandler() {
+   private void getTopRatedMovies(int page) {
+      mClient.getTopRatedMovies(page, new JsonHttpResponseHandler() {
          @Override
          public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
             reloadList(response);
