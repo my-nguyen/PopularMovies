@@ -1,6 +1,7 @@
 package com.nguyen.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,7 @@ import java.util.List;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
    // provide a direct reference to each of the views within a data item used to cache the views
    // within the item layout for fast access
-   public static class ViewHolder extends RecyclerView.ViewHolder {
+   public class ViewHolder extends RecyclerView.ViewHolder {
       // your holder should contain a member variable for any view that will be set as you render a row
       public ImageView imageView;
       // we also create a constructor that accepts the entire row and does the view lookups to find
@@ -27,6 +28,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
          // context from any ViewHolder instance
          super(itemView);
          imageView = (ImageView)itemView.findViewById(R.id.image);
+         itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Movie movie = mMovies.get(getLayoutPosition());
+               Intent intent = DetailActivity.newIntent(mContext, movie);
+               mContext.startActivity(intent);
+            }
+         });
       }
    }
 

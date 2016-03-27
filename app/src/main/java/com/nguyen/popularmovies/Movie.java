@@ -4,13 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by My on 3/26/2016.
  */
-public class Movie {
+public class Movie implements Serializable {
    String originalTitle;
    String posterPath;
    String overview;
