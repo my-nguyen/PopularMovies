@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
    // bind data source to adapter
    RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mMovies);
    int mPage = 1;
-   enum SortCriteria { LATEST, NOW_PLAYING, POPULAR, TOP_RATED, UPCOMING }
+   enum SortCriteria { NOW_PLAYING, POPULAR, TOP_RATED, UPCOMING }
    SortCriteria mCriteria = SortCriteria.POPULAR;
 
    @Override
@@ -58,9 +58,8 @@ public class MainActivity extends AppCompatActivity {
             // add whatever code is needed to append new items to the bottom of the list
             mPage++;
             switch (mCriteria) {
-               case LATEST:
-                  break;
                case NOW_PLAYING:
+                  getNowPlayingMovies(mPage);
                   break;
                case POPULAR:
                   getPopularMovies(mPage);
@@ -69,12 +68,11 @@ public class MainActivity extends AppCompatActivity {
                   getTopRatedMovies(mPage);
                   break;
                case UPCOMING:
+                  getUpcomingMovies(mPage);
                   break;
             }
          }
       });
-      // load data into view
-      // getPopularMovies(mPage);
 
       // set up Spinner on screen by populating the drop-down list
       Spinner sortOrder = (Spinner)findViewById(R.id.sort_order);
@@ -93,29 +91,34 @@ public class MainActivity extends AppCompatActivity {
             mPage = 1;
             switch (position) {
                case 0:
-                  mCriteria = SortCriteria.LATEST;
-                  // getLatestMovies(mPage);
+                  mCriteria = SortCriteria.NOW_PLAYING;
+                  getNowPlayingMovies(mPage);
                   break;
                case 1:
-                  mCriteria = SortCriteria.NOW_PLAYING;
-                  // getNowPlayingMovies(mPage);
-                  break;
-               case 2:
                   mCriteria = SortCriteria.POPULAR;
                   getPopularMovies(mPage);
                   break;
-               case 3:
+               case 2:
                   mCriteria = SortCriteria.TOP_RATED;
                   getTopRatedMovies(mPage);
                   break;
-               case 4:
+               case 3:
                   mCriteria = SortCriteria.UPCOMING;
-                  // getUpcomingMovies(mPage);
+                  getUpcomingMovies(mPage);
                   break;
             }
          }
          @Override
          public void onNothingSelected(AdapterView<?> parent) {
+         }
+      });
+   }
+
+   private void getNowPlayingMovies(final int page) {
+      mClient.getNowPlayingMovies(page, new JsonHttpResponseHandler() {
+         @Override
+         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            reloadList(page, response);
          }
       });
    }
@@ -138,16 +141,25 @@ public class MainActivity extends AppCompatActivity {
       });
    }
 
+   private void getUpcomingMovies(final int page) {
+      mClient.getUpcomingMovies(page, new JsonHttpResponseHandler() {
+         @Override
+         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            reloadList(page, response);
+         }
+      });
+   }
+
    private void reloadList(int page, JSONObject response) {
       // if this is a new request, empty the current list
       int size = mAdapter.getItemCount();
       if (page == 1 && size != 0) {
          mMovies.clear();
          mAdapter.notifyItemRangeRemoved(0, size-1);
+         size = 0;
       }
       // add all new movies to the current list
-      size = mAdapter.getItemCount();
       mMovies.addAll(Movie.fromJSONArray(response));
-      mAdapter.notifyItemRangeInserted(size, mMovies.size()-1);
+      mAdapter.notifyItemRangeInserted(size, mMovies.size() - 1);
    }
 }

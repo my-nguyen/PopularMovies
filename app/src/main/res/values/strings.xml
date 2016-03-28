@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">PopularMovies</string>
     <string-array name="sort_order_array">
-        <item>Latest</item>
         <item>Now Playing</item>
         <item>Popular</item>
         <item>Top Rated</item>
