@@ -21,7 +21,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
    // should this be a singleton?
-   TMDBClient mClient = new TMDBClient();
+   TMDBClient mClient = TMDBClient.getInstance();
    // data source, which needs to be an empty ArrayList and not NULL
    List<Movie> mMovies = new ArrayList<>();
    // bind data source to adapter

@@ -18,6 +18,7 @@ public class Movie {
    String overview;
    double voteAverage;
    String releaseDate;
+   long id;
 
    // empty constructor required by the Parceler library
    public Movie() {
@@ -31,6 +32,7 @@ public class Movie {
          movie.overview = jsonObject.getString("overview");
          movie.voteAverage = jsonObject.getDouble("vote_average");
          movie.releaseDate = jsonObject.getString("release_date");
+         movie.id = jsonObject.getLong("id");
       } catch (JSONException e) {
          e.printStackTrace();
       }
@@ -68,7 +70,8 @@ public class Movie {
             .append("><poster path: ").append(posterPath)
             .append("><sypnosis: ").append(overview)
             .append("><user rating: ").append(voteAverage)
-            .append("><release date: ").append(releaseDate).append(">\n");
+            .append("><release date: ").append(releaseDate)
+            .append("><id: ").append(id).append(">\n");
       return builder.toString();
    }
 }

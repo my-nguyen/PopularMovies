@@ -14,7 +14,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:background="@color/colorTeal"
-        android:textColor="@color/colorWhite"
+        android:textColor="@android:color/white"
         android:gravity="center_vertical"
         android:textSize="18dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -56,5 +56,28 @@
             android:layout_alignParentLeft="true"
             android:layout_marginTop="20dp"
             />
+        <View
+            android:id="@+id/separator1"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_below="@id/synopsis"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/separator1"
+            android:id="@+id/trailers"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trailers:"
+                android:textSize="18dp"
+                />
+        </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
