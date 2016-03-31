@@ -14,7 +14,7 @@ public class Trailer {
    String id;
    String key;
    String name;
-   String site;
+   int size;
 
    public static Trailer fromJSONObject(JSONObject jsonObject) {
       Trailer trailer = new Trailer();
@@ -22,7 +22,7 @@ public class Trailer {
          trailer.id = jsonObject.getString("id");
          trailer.key = jsonObject.getString("key");
          trailer.name = jsonObject.getString("name");
-         trailer.site = jsonObject.getString("site");
+         trailer.size = jsonObject.getInt("size");
       } catch (JSONException e) {
          e.printStackTrace();
       }
@@ -60,7 +60,8 @@ public class Trailer {
       builder.append("<id: ").append(id)
             .append("><key: ").append(key)
             .append("><name: ").append(name)
-            .append("><site: ").append(site).append(">\n");
+            .append("><size: ").append(size)
+            .append(">\n");
       return builder.toString();
    }
 }

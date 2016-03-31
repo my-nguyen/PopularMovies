@@ -14,7 +14,6 @@ public class Review {
    String id;
    String author;
    String content;
-   String url;
 
    public static Review fromJSONObject(JSONObject jsonObject) {
       Review review = new Review();
@@ -22,7 +21,6 @@ public class Review {
          review.id = jsonObject.getString("id");
          review.author = jsonObject.getString("author");
          review.content = jsonObject.getString("content");
-         review.url = jsonObject.getString("url");
       } catch (JSONException e) {
          e.printStackTrace();
       }
@@ -59,8 +57,7 @@ public class Review {
       StringBuilder builder = new StringBuilder();
       builder.append("<id: ").append(id)
             .append("><author: ").append(author)
-            .append("><content: ").append(content)
-            .append("><url: ").append(url).append(">\n");
+            .append("><content: ").append(content).append(">\n");
       return builder.toString();
    }
 }

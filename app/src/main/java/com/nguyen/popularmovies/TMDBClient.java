@@ -42,12 +42,8 @@ public class TMDBClient {
       getMetadata("videos", movieId, handler);
    }
 
-   private void getMetadata(String metadata, long movieId, AsyncHttpResponseHandler handler) {
-      AsyncHttpClient client = new AsyncHttpClient();
-      String url = TMDB_BASE_URL + "/" + movieId + "/" + metadata;
-      RequestParams params = new RequestParams();
-      params.put("api_key", TMDB_API_KEY);
-      client.get(url, params, handler);
+   public void getReviews(long movieId, AsyncHttpResponseHandler handler) {
+      getMetadata("reviews", movieId, handler);
    }
 
    private void getMovies(String sortCriteria, int page, AsyncHttpResponseHandler handler) {
@@ -56,6 +52,14 @@ public class TMDBClient {
       RequestParams params = new RequestParams();
       params.put("api_key", TMDB_API_KEY);
       params.put("page", page);
+      client.get(url, params, handler);
+   }
+
+   private void getMetadata(String metadata, long movieId, AsyncHttpResponseHandler handler) {
+      AsyncHttpClient client = new AsyncHttpClient();
+      String url = TMDB_BASE_URL + "/" + movieId + "/" + metadata;
+      RequestParams params = new RequestParams();
+      params.put("api_key", TMDB_API_KEY);
       client.get(url, params, handler);
    }
 }

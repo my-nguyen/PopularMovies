@@ -3,10 +3,14 @@ package com.nguyen.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -53,11 +57,9 @@ public class DetailActivity extends AppCompatActivity {
       client.getTrailers(movie.id, new JsonHttpResponseHandler() {
          @Override
          public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-            List<Trailer> trailers = Trailer.fromJSONArray(response);
+            final List<Trailer> trailers = Trailer.fromJSONArray(response);
             LinearLayout XMLLayout = (LinearLayout) findViewById(R.id.trailers);
-            for (int i = 0; i < trailers.size(); i++) {
-               // LinearLayout dynamicLayout = new LinearLayout(DetailActivity.this);
-               // dynamicLayout.setOrientation(LinearLayout.HORIZONTAL);
+            for (final Trailer trailer : trailers) {
                RelativeLayout dynamicLayout = new RelativeLayout(DetailActivity.this);
                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                      RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -66,28 +68,66 @@ public class DetailActivity extends AppCompatActivity {
                ImageButton button = new ImageButton(DetailActivity.this);
                button.setImageResource(R.drawable.ic_trailer_play);
                button.setBackgroundColor(Color.TRANSPARENT);
+               // button.setId() is necessary for nameParams.addRule() below
                button.setId(1);
                RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(
                      ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-               buttonParams.setMargins(20, 10, 20, 10);
+               buttonParams.setMargins(20, 0, 20, 0);
                dynamicLayout.addView(button, buttonParams);
+               button.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                     Uri uri = Uri.parse("http://www.youtube.com/watch?v=" + trailer.key);
+                     startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                  }
+               });
 
-               TextView label = new TextView(DetailActivity.this);
-               label.setText("Trailer " + (i + 1));
-               label.setGravity(Gravity.CENTER);
-               RelativeLayout.LayoutParams labelParams = new RelativeLayout.LayoutParams(
+               TextView name = new TextView(DetailActivity.this);
+               name.setText(trailer.name);
+               name.setGravity(Gravity.CENTER);
+               RelativeLayout.LayoutParams nameParams = new RelativeLayout.LayoutParams(
                      ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-               labelParams.addRule(RelativeLayout.RIGHT_OF, button.getId());
-               labelParams.addRule(RelativeLayout.ALIGN_TOP, button.getId());
-               labelParams.addRule(RelativeLayout.ALIGN_BOTTOM, button.getId());
-               labelParams.setMarginStart(30);
-               dynamicLayout.addView(label, labelParams);
+               nameParams.addRule(RelativeLayout.RIGHT_OF, button.getId());
+               nameParams.addRule(RelativeLayout.ALIGN_TOP, button.getId());
+               nameParams.addRule(RelativeLayout.ALIGN_BOTTOM, button.getId());
+               nameParams.setMarginStart(30);
+               dynamicLayout.addView(name, nameParams);
 
                XMLLayout.addView(dynamicLayout);
             }
          }
       });
-      }
+
+      client.getReviews(movie.id, new JsonHttpResponseHandler() {
+         @Override
+         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            List<Review> reviews = Review.fromJSONArray(response);
+            LinearLayout XMLLayout = (LinearLayout) findViewById(R.id.reviews);
+            for (Review review : reviews) {
+               LinearLayout dynamicLayout = new LinearLayout(DetailActivity.this);
+               dynamicLayout.setOrientation(LinearLayout.VERTICAL);
+               dynamicLayout.setPadding(20, 0, 20, 0);
+
+               TextView author = new TextView(DetailActivity.this);
+               Spanned html = Html.fromHtml("<i>by <b>" + review.author + ":</b></i>");
+               author.setText(html);
+               dynamicLayout.addView(author);
+
+               TextView content = new TextView(DetailActivity.this);
+               content.setText(review.content);
+               content.setPadding(0, 20, 0, 20);
+               dynamicLayout.addView(content);
+
+               View separator = new View(DetailActivity.this);
+               separator.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2));
+               separator.setBackgroundColor(Color.DKGRAY);
+               dynamicLayout.addView(separator);
+
+               XMLLayout.addView(dynamicLayout);
+            }
+         }
+      });
+   }
 
    public static Intent newIntent(Context context, Movie movie) {
       Intent intent = new Intent(context, DetailActivity.class);
