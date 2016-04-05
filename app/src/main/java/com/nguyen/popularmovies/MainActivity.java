@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
    // bind data source to adapter
    RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mMovies);
    int mPage = 1;
-   enum SortCriteria { NOW_PLAYING, POPULAR, TOP_RATED, UPCOMING }
+   enum SortCriteria { NOW_PLAYING, POPULAR, TOP_RATED, UPCOMING, FAVORITE }
    SortCriteria mCriteria = SortCriteria.POPULAR;
 
    @Override
@@ -70,9 +70,15 @@ public class MainActivity extends AppCompatActivity {
                case UPCOMING:
                   getUpcomingMovies(mPage);
                   break;
+               case FAVORITE:
+                  getFavoriteMovies(mPage);
+                  break;
             }
          }
       });
+
+      // generate database schema
+      Movie.createDummy();
 
       // set up Spinner on screen by populating the drop-down list
       Spinner sortOrder = (Spinner)findViewById(R.id.sort_order);
@@ -105,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
                case 3:
                   mCriteria = SortCriteria.UPCOMING;
                   getUpcomingMovies(mPage);
+                  break;
+               case 4:
+                  mCriteria = SortCriteria.FAVORITE;
+                  getFavoriteMovies(mPage);
                   break;
             }
          }
@@ -150,16 +160,27 @@ public class MainActivity extends AppCompatActivity {
       });
    }
 
+   // load favorite movies from local database
+   private void getFavoriteMovies(int page) {
+      Log.d("NGUYEN", "getFavoriteMovies(), movies: " + Movie.query());
+      reloadList(page, Movie.query());
+   }
+
+   // load movies from TMDB.org
    private void reloadList(int page, JSONObject response) {
-      // if this is a new request, empty the current list
+      reloadList(page, Movie.fromJSONArray(response));
+   }
+
+   private void reloadList(int page, List<Movie> movies) {
       int size = mAdapter.getItemCount();
+      // if this is a new request, empty the current list
       if (page == 1 && size != 0) {
          mMovies.clear();
          mAdapter.notifyItemRangeRemoved(0, size-1);
          size = 0;
       }
       // add all new movies to the current list
-      mMovies.addAll(Movie.fromJSONArray(response));
+      mMovies.addAll(movies);
       mAdapter.notifyItemRangeInserted(size, mMovies.size() - 1);
    }
 }

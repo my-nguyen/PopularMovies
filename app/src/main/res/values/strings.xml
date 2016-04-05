@@ -5,5 +5,6 @@
         <item>Popular</item>
         <item>Top Rated</item>
         <item>Upcoming</item>
+        <item>Favorite</item>
     </string-array>
 </resources>

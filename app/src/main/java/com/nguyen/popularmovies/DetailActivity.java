@@ -49,6 +49,19 @@ public class DetailActivity extends AppCompatActivity {
       year.setText(yearText);
       TextView average = (TextView)findViewById(R.id.average);
       String averageText = movie.voteAverage + "/10";
+      ImageButton favorite = (ImageButton)findViewById(R.id.favorite);
+      // favorite.setBackgroundDrawable(getResources().getDrawable(R.drawable.heart));
+      /*
+      Movie dbMovie = Movie.query(movie.id);
+      if (dbMovie != null)
+         favorite.setColorFilter(Color.RED);
+         */
+      favorite.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+
+         }
+      });
       average.setText(averageText);
       TextView synopsis = (TextView)findViewById(R.id.synopsis);
       synopsis.setText(movie.overview);
@@ -66,7 +79,7 @@ public class DetailActivity extends AppCompatActivity {
                dynamicLayout.setLayoutParams(layoutParams);
 
                ImageButton button = new ImageButton(DetailActivity.this);
-               button.setImageResource(R.drawable.ic_trailer_play);
+               button.setImageResource(R.drawable.trailer_play);
                button.setBackgroundColor(Color.TRANSPARENT);
                // button.setId() is necessary for nameParams.addRule() below
                button.setId(1);
