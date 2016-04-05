@@ -3,6 +3,7 @@ package com.nguyen.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,8 @@ import cz.msebera.android.httpclient.Header;
  * Created by My on 3/26/2016.
  */
 public class DetailActivity extends AppCompatActivity {
+   Movie dbMovie = null;
+
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -49,17 +52,26 @@ public class DetailActivity extends AppCompatActivity {
       year.setText(yearText);
       TextView average = (TextView)findViewById(R.id.average);
       String averageText = movie.voteAverage + "/10";
-      ImageButton favorite = (ImageButton)findViewById(R.id.favorite);
+      final ImageButton favorite = (ImageButton)findViewById(R.id.favorite);
       // favorite.setBackgroundDrawable(getResources().getDrawable(R.drawable.heart));
-      /*
-      Movie dbMovie = Movie.query(movie.id);
+      final ColorFilter gray = favorite.getColorFilter();
+      dbMovie = Movie.query(movie.id);
       if (dbMovie != null)
          favorite.setColorFilter(Color.RED);
-         */
       favorite.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
-
+            if (dbMovie == null) {
+               favorite.setColorFilter(Color.RED);
+               movie.save();
+               dbMovie = movie;
+               Log.d("NGUYEN", "saved movie: " + movie);
+            } else {
+               favorite.setColorFilter(gray);
+               dbMovie.delete();
+               dbMovie = null;
+               Log.d("NGUYEN", "deleted movie");
+            }
          }
       });
       average.setText(averageText);

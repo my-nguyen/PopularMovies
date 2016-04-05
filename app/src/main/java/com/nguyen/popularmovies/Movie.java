@@ -79,15 +79,14 @@ public class Movie extends Model {
       return movies;
    }
 
-   /*
    public static Movie query(long id) {
-      List<Movie> movies = new Select().from(Movie.class).where("remote_id = ?", id).execute();
-      return movies != null ? movies.get(0) : null;
+      Log.d("NGUYEN", "query single");
+      return new Select().from(Movie.class).where("remote_id = ?", id).executeSingle();
    }
-   */
 
    public static List<Movie> query() {
-      return new Select().from(Movie.class).orderBy("original_title ASC").execute();
+      // return new Select().from(Movie.class).orderBy("original_title ASC").execute();
+      return new Select().from(Movie.class).execute();
    }
 
    public static void createDummy() {
