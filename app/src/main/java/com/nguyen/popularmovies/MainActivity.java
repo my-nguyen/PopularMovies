@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
       });
 
       // generate database schema
-      Movie.createDummy();
+      // Movie.createDummy();
 
       // set up Spinner on screen by populating the drop-down list
       Spinner sortOrder = (Spinner)findViewById(R.id.sort_order);
@@ -162,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
    // load favorite movies from local database
    private void getFavoriteMovies(int page) {
-      Log.d("NGUYEN", "getFavoriteMovies(), movies: " + Movie.query());
       reloadList(page, Movie.query());
    }
 
@@ -176,11 +175,16 @@ public class MainActivity extends AppCompatActivity {
       // if this is a new request, empty the current list
       if (page == 1 && size != 0) {
          mMovies.clear();
-         mAdapter.notifyItemRangeRemoved(0, size-1);
+         mAdapter.notifyItemRangeRemoved(0, size - 1);
          size = 0;
+         // need to call notifyDataSetChanged() for the case of empty favorite list
+         mAdapter.notifyDataSetChanged();
       }
       // add all new movies to the current list
-      mMovies.addAll(movies);
-      mAdapter.notifyItemRangeInserted(size, mMovies.size() - 1);
+      // movies.size() is zero when it's the favorite list
+      if (movies.size() != 0) {
+         mMovies.addAll(movies);
+         mAdapter.notifyItemRangeInserted(size, mMovies.size() - 1);
+      }
    }
 }

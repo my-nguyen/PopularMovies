@@ -33,6 +33,8 @@ public class Movie extends Model {
    public double voteAverage;
    @Column(name = "release_date")
    public String releaseDate;
+   // currently Movie is not associated with Review or Trailer, so the latter two are not saved in
+   // local database but Movie is. instead, Review and Trailer are retrieved directly from TMDB.org
 
    // empty constructor required by the Parceler library and the ActiveAndroid model
    public Movie() {
@@ -47,7 +49,6 @@ public class Movie extends Model {
          movie.overview = jsonObject.getString("overview");
          movie.voteAverage = jsonObject.getDouble("vote_average");
          movie.releaseDate = jsonObject.getString("release_date");
-         movie.save();
       } catch (JSONException e) {
          e.printStackTrace();
       }
@@ -91,6 +92,7 @@ public class Movie extends Model {
 
    public static void createDummy() {
       Movie movie = new Movie();
+      // need to fill in all the columns, otherwise save() will fail
       movie.id = 1;
       movie.originalTitle = "Dummy";
       movie.posterPath = "";
@@ -98,7 +100,6 @@ public class Movie extends Model {
       movie.voteAverage = 0.0;
       movie.releaseDate = "";
       movie.save();
-      Log.d("NGUYEN", "createDummy()");
    }
 
    @Override
