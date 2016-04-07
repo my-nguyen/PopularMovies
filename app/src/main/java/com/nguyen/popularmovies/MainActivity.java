@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
    // should this be a singleton?
    TMDBClient mClient = TMDBClient.getInstance();
    // data source, which needs to be an empty ArrayList and not NULL
-   List<Movie> mMovies = new ArrayList<>();
+   List<CPMovie> mMovies = new ArrayList<>();
    // bind data source to adapter
    RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mMovies);
    int mPage = 1;
@@ -77,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
          }
       });
 
-      // generate database schema
-      // Movie.createDummy();
+      CPMovie.setContentResolver(getContentResolver());
 
       // set up Spinner on screen by populating the drop-down list
       Spinner sortOrder = (Spinner)findViewById(R.id.sort_order);
@@ -162,15 +160,16 @@ public class MainActivity extends AppCompatActivity {
 
    // load favorite movies from local database
    private void getFavoriteMovies(int page) {
-      reloadList(page, Movie.query());
+      // reloadList(page, Movie.query());
+      reloadList(mPage, CPMovie.query());
    }
 
    // load movies from TMDB.org
    private void reloadList(int page, JSONObject response) {
-      reloadList(page, Movie.fromJSONArray(response));
+      reloadList(page, CPMovie.fromJSONArray(response));
    }
 
-   private void reloadList(int page, List<Movie> movies) {
+   private void reloadList(int page, List<CPMovie> movies) {
       int size = mAdapter.getItemCount();
       // if this is a new request, empty the current list
       if (page == 1 && size != 0) {

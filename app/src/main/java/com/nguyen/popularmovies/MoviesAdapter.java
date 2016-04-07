@@ -15,15 +15,15 @@ import java.util.List;
 /**
  * Created by My on 3/26/2016.
  */
-public class MoviesAdapter extends ArrayAdapter<Movie> {
-   public MoviesAdapter(Context context, List<Movie> movies) {
+public class MoviesAdapter extends ArrayAdapter<CPMovie> {
+   public MoviesAdapter(Context context, List<CPMovie> movies) {
       super(context, 0, movies);
    }
 
    @Override
    public View getView(int position, View convertView, ViewGroup parent) {
       // get the data item for this position
-      Movie movie = getItem(position);
+      CPMovie movie = getItem(position);
       // check if an existing view is being reused, otherwise inflate the view
       if (convertView == null)
          convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_movie, parent, false);

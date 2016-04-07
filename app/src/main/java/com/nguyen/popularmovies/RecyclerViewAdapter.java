@@ -31,7 +31,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
          itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               Movie movie = mMovies.get(getLayoutPosition());
+               CPMovie movie = mMovies.get(getLayoutPosition());
                Intent intent = DetailActivity.newIntent(mContext, movie);
                mContext.startActivity(intent);
             }
@@ -40,11 +40,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
    }
 
    // store a member variable for the movies
-   private List<Movie> mMovies;
+   private List<CPMovie> mMovies;
    private Context mContext;
 
    // pass in the movie array into the constructor
-   public RecyclerViewAdapter(List<Movie> movies) {
+   public RecyclerViewAdapter(List<CPMovie> movies) {
       mMovies = movies;
    }
 
@@ -64,7 +64,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
    @Override
    public void onBindViewHolder(ViewHolder holder, int position) {
       // get the data model based on position
-      Movie movie = mMovies.get(position);
+      CPMovie movie = mMovies.get(position);
       // set item views based on the data model
       ImageView imageView = holder.imageView;
       String imageUrl = "http://image.tmdb.org/t/p/w185/" + movie.posterPath;

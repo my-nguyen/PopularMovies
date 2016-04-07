@@ -1,5 +1,7 @@
 package com.nguyen.popularmovies;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
@@ -34,14 +37,16 @@ import cz.msebera.android.httpclient.Header;
  * Created by My on 3/26/2016.
  */
 public class DetailActivity extends AppCompatActivity {
-   Movie dbMovie = null;
+   CPMovie dbMovie = null;
+   static final Uri CONTENT_URI = Uri.parse("content://com.nguyen.popularmovies.MoviesProvider/favorites");
+   ContentResolver resolver;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_detail);
 
-      final Movie movie = (Movie)Parcels.unwrap(getIntent().getParcelableExtra("MOVIE_IN"));
+      final CPMovie movie = (CPMovie)Parcels.unwrap(getIntent().getParcelableExtra("MOVIE_IN"));
       TextView title = (TextView)findViewById(R.id.title);
       title.setText(movie.originalTitle);
       ImageView poster = (ImageView)findViewById(R.id.poster);
@@ -55,7 +60,9 @@ public class DetailActivity extends AppCompatActivity {
       final ImageButton favorite = (ImageButton)findViewById(R.id.favorite);
       // favorite.setBackgroundDrawable(getResources().getDrawable(R.drawable.heart));
       final ColorFilter gray = favorite.getColorFilter();
-      dbMovie = Movie.query(movie.id);
+
+      CPMovie.setContentResolver(getContentResolver());
+      dbMovie = CPMovie.query(movie.id);
       if (dbMovie != null)
          favorite.setColorFilter(Color.RED);
       favorite.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +72,6 @@ public class DetailActivity extends AppCompatActivity {
                favorite.setColorFilter(Color.RED);
                movie.save();
                dbMovie = movie;
-               Log.d("NGUYEN", "saved movie: " + movie);
             } else {
                favorite.setColorFilter(gray);
                dbMovie.delete();
@@ -154,7 +160,7 @@ public class DetailActivity extends AppCompatActivity {
       });
    }
 
-   public static Intent newIntent(Context context, Movie movie) {
+   public static Intent newIntent(Context context, CPMovie movie) {
       Intent intent = new Intent(context, DetailActivity.class);
       intent.putExtra("MOVIE_IN", Parcels.wrap(movie));
       return intent;

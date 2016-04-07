@@ -18,9 +18,10 @@ import java.util.List;
 /**
  * Created by My on 3/26/2016.
  */
-@Parcel(analyze = {Movie.class})
-@Table(name = "Movies")
-public class Movie extends Model {
+@Parcel(analyze = {AAMovie.class})
+@Table(name = "AAMovies")
+// AAMovie = ActiveAndroidMovie; Movie class whose database interaction is done thru ActiveAndroid
+public class AAMovie extends Model {
    @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
    public long id;
    @Column(name = "original_title")
@@ -33,15 +34,15 @@ public class Movie extends Model {
    public double voteAverage;
    @Column(name = "release_date")
    public String releaseDate;
-   // currently Movie is not associated with Review or Trailer, so the latter two are not saved in
-   // local database but Movie is. instead, Review and Trailer are retrieved directly from TMDB.org
+   // currently AAMovie is not associated with Review or Trailer, so the latter two are not saved in
+   // local database but AAMovie is. instead, Review and Trailer are retrieved directly from TMDB.org
 
    // empty constructor required by the Parceler library and the ActiveAndroid model
-   public Movie() {
+   public AAMovie() {
    }
 
-   public static Movie fromJSONObject(JSONObject jsonObject) {
-      Movie movie = new Movie();
+   public static AAMovie fromJSONObject(JSONObject jsonObject) {
+      AAMovie movie = new AAMovie();
       try {
          movie.id = jsonObject.getLong("id");
          movie.originalTitle = jsonObject.getString("original_title");
@@ -55,14 +56,14 @@ public class Movie extends Model {
       return movie;
    }
 
-   public static List<Movie> fromJSONArray(JSONObject response) {
-      List<Movie> movies = new ArrayList<>();
+   public static List<AAMovie> fromJSONArray(JSONObject response) {
+      List<AAMovie> movies = new ArrayList<>();
       try {
          JSONArray jsonArray = response.getJSONArray("results");
          for (int i = 0; i < jsonArray.length(); i++) {
             try {
                JSONObject jsonObject = jsonArray.getJSONObject(i);
-               Movie movie = fromJSONObject(jsonObject);
+               AAMovie movie = fromJSONObject(jsonObject);
                if (movie != null)
                   movies.add(movie);
             } catch (JSONException e) {
@@ -79,26 +80,13 @@ public class Movie extends Model {
       return movies;
    }
 
-   public static Movie query(long id) {
+   public static AAMovie query(long id) {
       Log.d("NGUYEN", "query single");
-      return new Select().from(Movie.class).where("remote_id = ?", id).executeSingle();
+      return new Select().from(AAMovie.class).where("remote_id = ?", id).executeSingle();
    }
 
-   public static List<Movie> query() {
-      // return new Select().from(Movie.class).orderBy("original_title ASC").execute();
-      return new Select().from(Movie.class).execute();
-   }
-
-   public static void createDummy() {
-      Movie movie = new Movie();
-      // need to fill in all the columns, otherwise save() will fail
-      movie.id = 1;
-      movie.originalTitle = "Dummy";
-      movie.posterPath = "";
-      movie.overview = "";
-      movie.voteAverage = 0.0;
-      movie.releaseDate = "";
-      movie.save();
+   public static List<AAMovie> query() {
+      return new Select().from(AAMovie.class).execute();
    }
 
    @Override
