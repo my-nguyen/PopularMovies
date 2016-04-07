@@ -56,7 +56,7 @@ public class DetailActivity extends AppCompatActivity {
       String yearText = movie.releaseDate.split("-")[0];
       year.setText(yearText);
       TextView average = (TextView)findViewById(R.id.average);
-      String averageText = movie.voteAverage + "/10";
+      String averageText = String.format("%.1f", movie.voteAverage) + "/10";
       final ImageButton favorite = (ImageButton)findViewById(R.id.favorite);
       // favorite.setBackgroundDrawable(getResources().getDrawable(R.drawable.heart));
       final ColorFilter gray = favorite.getColorFilter();
