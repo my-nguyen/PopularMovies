@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+// base class used by MainActivity and DetailActivity. this class loads the appropriate layout
+// (depending on what MainActivity or DetailActivity supplies via getLayoutResId()) and loads the
+// appropriate Fragment in the layout (which is just a placeholder)
 public abstract class ContainerActivity extends FragmentActivity {
    protected abstract Fragment newFragment();
 

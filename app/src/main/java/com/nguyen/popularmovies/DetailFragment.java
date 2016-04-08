@@ -1,7 +1,6 @@
 package com.nguyen.popularmovies;
 
-import android.content.ContentResolver;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -37,8 +36,23 @@ import cz.msebera.android.httpclient.Header;
  */
 public class DetailFragment extends Fragment {
    CPMovie dbMovie = null;
-   static final Uri CONTENT_URI = Uri.parse("content://com.nguyen.popularmovies.MoviesProvider/favorites");
-   ContentResolver resolver;
+   private Callbacks mCallbacks;
+
+   public interface Callbacks {
+      void onMovieUpdated();
+   }
+
+   @Override
+   public void onAttach(Activity activity) {
+      super.onAttach(activity);
+      mCallbacks = (Callbacks)activity;
+   }
+
+   @Override
+   public void onDetach() {
+      super.onDetach();
+      mCallbacks = null;
+   }
 
    @Override
    public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +94,7 @@ public class DetailFragment extends Fragment {
                favorite.setColorFilter(gray);
                dbMovie.delete();
                dbMovie = null;
+               mCallbacks.onMovieUpdated();
                Log.d("NGUYEN", "deleted movie");
             }
          }

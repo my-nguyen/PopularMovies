@@ -34,7 +34,7 @@ public class MainFragment extends Fragment {
    SortCriteria mCriteria = SortCriteria.POPULAR;
    private Callbacks mCallbacks;
 
-   // required interface for hosting activities
+   // interface to update the UI when a Movie is selected from the main list
    public interface Callbacks {
       void onMovieSelected(CPMovie movie);
    }
@@ -189,7 +189,7 @@ public class MainFragment extends Fragment {
    }
 
    // load favorite movies from local database
-   private void getFavoriteMovies(int page) {
+   public void getFavoriteMovies(int page) {
       reloadList(page, CPMovie.query());
    }
 
