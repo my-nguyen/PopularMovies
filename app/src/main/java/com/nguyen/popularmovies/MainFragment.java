@@ -190,8 +190,7 @@ public class MainFragment extends Fragment {
 
    // load favorite movies from local database
    private void getFavoriteMovies(int page) {
-      // reloadList(page, Movie.query());
-      reloadList(mPage, CPMovie.query());
+      reloadList(page, CPMovie.query());
    }
 
    // load movies from TMDB.org
