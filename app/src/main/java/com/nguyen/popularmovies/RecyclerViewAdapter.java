@@ -32,8 +32,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                CPMovie movie = mMovies.get(getLayoutPosition());
+               /*
                Intent intent = DetailActivity.newIntent(mContext, movie);
                mContext.startActivity(intent);
+               */
+               mCallbacks.onMovieSelected(movie);
             }
          });
       }
@@ -42,10 +45,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
    // store a member variable for the movies
    private List<CPMovie> mMovies;
    private Context mContext;
+   MainFragment.Callbacks mCallbacks;
 
    // pass in the movie array into the constructor
-   public RecyclerViewAdapter(List<CPMovie> movies) {
+   public RecyclerViewAdapter(List<CPMovie> movies, MainFragment.Callbacks callbacks) {
       mMovies = movies;
+      mCallbacks = callbacks;
    }
 
    // usually involves inflating a layout from XML and returning the holder

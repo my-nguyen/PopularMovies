@@ -1,5 +1,6 @@
 package com.nguyen.popularmovies;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,15 +23,33 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class MainFragment extends Fragment {
-   // should this be a singleton?
    TMDBClient mClient = TMDBClient.getInstance();
    // data source, which needs to be an empty ArrayList and not NULL
    List<CPMovie> mMovies = new ArrayList<>();
    // bind data source to adapter
-   RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mMovies);
+   // RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mMovies);
+   RecyclerViewAdapter mAdapter;
    int mPage = 1;
    enum SortCriteria { NOW_PLAYING, POPULAR, TOP_RATED, UPCOMING, FAVORITE }
    SortCriteria mCriteria = SortCriteria.POPULAR;
+   private Callbacks mCallbacks;
+
+   // required interface for hosting activities
+   public interface Callbacks {
+      void onMovieSelected(CPMovie movie);
+   }
+
+   @Override
+   public void onAttach(Activity activity) {
+      super.onAttach(activity);
+      mCallbacks = (Callbacks)activity;
+   }
+
+   @Override
+   public void onDetach() {
+      super.onDetach();
+      mCallbacks = null;
+   }
 
    @Override
    public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +72,7 @@ public class MainFragment extends Fragment {
       // look up the RecyclerView in activity layout
       RecyclerView listView = (RecyclerView)view.findViewById(R.id.recycler_view);
       // attach the adapter to the RecyclerView to populate items
+      mAdapter = new RecyclerViewAdapter(mMovies, mCallbacks);
       listView.setAdapter(mAdapter);
       GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
       // set layout manager to position the items
