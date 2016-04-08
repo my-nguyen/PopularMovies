@@ -31,7 +31,6 @@ public class MoviesAdapter extends ArrayAdapter<CPMovie> {
       ImageView imageView = (ImageView)convertView.findViewById(R.id.image);
       // populate the data into the template view using the data object
       String imageUrl = "http://image.tmdb.org/t/p/w185/" + movie.posterPath;
-      Log.d("NGUYEN", "title: " + movie.originalTitle + ", url: " + imageUrl);
       int widthPixels = getContext().getResources().getDisplayMetrics().widthPixels;
       Picasso.with(getContext()).load(imageUrl).resize(widthPixels/2, 0).into(imageView);
       // return the completed view to render on screen

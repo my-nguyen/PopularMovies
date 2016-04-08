@@ -98,8 +98,8 @@ public class MainFragment extends Fragment {
                case UPCOMING:
                   getUpcomingMovies(page+1);
                   break;
+               // assuming the Favorite list is not that big, there's no need for endless scrolling
                case FAVORITE:
-                  getFavoriteMovies(page+1);
                   break;
             }
          }
@@ -152,6 +152,14 @@ public class MainFragment extends Fragment {
       return view;
    }
 
+   @Override
+   public void onResume() {
+      super.onResume();
+      // if the resumed screen is the Favorite list, reload the list
+      if (mCriteria == SortCriteria.FAVORITE)
+         getFavoriteMovies(1);
+   }
+
    private void getNowPlayingMovies(final int page) {
       mClient.getNowPlayingMovies(page, new JsonHttpResponseHandler() {
          @Override
@@ -199,7 +207,6 @@ public class MainFragment extends Fragment {
    }
 
    private void reloadList(int page, List<CPMovie> movies) {
-      Log.d("NGUYEN", "reloadList(), page: " + page);
       int size = mAdapter.getItemCount();
       // if this is a new request, empty the current list
       if (page == 1 && size != 0) {

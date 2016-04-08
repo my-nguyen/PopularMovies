@@ -35,7 +35,7 @@ import cz.msebera.android.httpclient.Header;
  * Created by My on 3/26/2016.
  */
 public class DetailFragment extends Fragment {
-   CPMovie dbMovie = null;
+   private CPMovie dbMovie = null;
    private Callbacks mCallbacks;
 
    public interface Callbacks {
@@ -76,7 +76,6 @@ public class DetailFragment extends Fragment {
       TextView average = (TextView)view.findViewById(R.id.average);
       String averageText = String.format("%.1f", movie.voteAverage) + "/10";
       final ImageButton favorite = (ImageButton)view.findViewById(R.id.favorite);
-      // favorite.setBackgroundDrawable(getResources().getDrawable(R.drawable.heart));
       final ColorFilter gray = favorite.getColorFilter();
 
       CPMovie.setContentResolver(getActivity().getContentResolver());
@@ -94,9 +93,9 @@ public class DetailFragment extends Fragment {
                favorite.setColorFilter(gray);
                dbMovie.delete();
                dbMovie = null;
-               mCallbacks.onMovieUpdated();
-               Log.d("NGUYEN", "deleted movie");
             }
+            // if it's a tablet, update the Favorite list on the left panel
+            mCallbacks.onMovieUpdated();
          }
       });
       average.setText(averageText);

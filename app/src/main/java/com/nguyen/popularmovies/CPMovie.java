@@ -60,7 +60,6 @@ public class CPMovie {
             movies.add(fromCursor(cursor));
          } while (cursor.moveToNext());
       }
-      Log.d("NGUYEN", "query returns " + movies.size() + " movies");
       return movies;
    }
 
@@ -73,7 +72,6 @@ public class CPMovie {
       values.put("vote_average", voteAverage);
       values.put("release_date", releaseDate);
       sResolver.insert(MoviesProvider.CONTENT_URI, values);
-      Log.d("NGUYEN", "saved movie: " + this);
    }
 
    public void delete() {

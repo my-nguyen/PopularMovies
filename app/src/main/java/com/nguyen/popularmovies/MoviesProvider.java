@@ -80,7 +80,6 @@ public class MoviesProvider extends ContentProvider {
       if (rowId > 0) {
          Uri result = ContentUris.withAppendedId(CONTENT_URI, rowId);
          getContext().getContentResolver().notifyChange(result, null);
-         Log.d("NGUYEN", "row insert successful");
          return result;
       } else {
          Log.d("NGUYEN", "row insert failed");
@@ -140,7 +139,6 @@ public class MoviesProvider extends ContentProvider {
       @Override
       public void onCreate(SQLiteDatabase db) {
          db.execSQL(CREATE_TABLE);
-         Log.d("NGUYEN", CREATE_TABLE);
       }
 
       @Override

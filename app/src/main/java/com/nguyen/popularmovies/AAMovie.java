@@ -81,7 +81,6 @@ public class AAMovie extends Model {
    }
 
    public static AAMovie query(long id) {
-      Log.d("NGUYEN", "query single");
       return new Select().from(AAMovie.class).where("remote_id = ?", id).executeSingle();
    }
 
