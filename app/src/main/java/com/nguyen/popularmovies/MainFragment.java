@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,6 @@ public class MainFragment extends Fragment {
    // bind data source to adapter
    // RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mMovies);
    RecyclerViewAdapter mAdapter;
-   int mPage = 1;
    enum SortCriteria { NOW_PLAYING, POPULAR, TOP_RATED, UPCOMING, FAVORITE }
    SortCriteria mCriteria = SortCriteria.POPULAR;
    private Callbacks mCallbacks;
@@ -83,22 +83,23 @@ public class MainFragment extends Fragment {
          public void onLoadMore(int page, int totalItemsCount) {
             // triggered only when new data needs to be appended to the list
             // add whatever code is needed to append new items to the bottom of the list
-            mPage++;
             switch (mCriteria) {
                case NOW_PLAYING:
-                  getNowPlayingMovies(mPage);
+                  // with EndlessRecyclerViewScrollListener, page starts at 0
+                  // with TMDB.org, page starts at 1
+                  getNowPlayingMovies(page+1);
                   break;
                case POPULAR:
-                  getPopularMovies(mPage);
+                  getPopularMovies(page+1);
                   break;
                case TOP_RATED:
-                  getTopRatedMovies(mPage);
+                  getTopRatedMovies(page+1);
                   break;
                case UPCOMING:
-                  getUpcomingMovies(mPage);
+                  getUpcomingMovies(page+1);
                   break;
                case FAVORITE:
-                  getFavoriteMovies(mPage);
+                  getFavoriteMovies(page+1);
                   break;
             }
          }
@@ -120,27 +121,26 @@ public class MainFragment extends Fragment {
       sortOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
          @Override
          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            mPage = 1;
             switch (position) {
                case 0:
                   mCriteria = SortCriteria.NOW_PLAYING;
-                  getNowPlayingMovies(mPage);
+                  getNowPlayingMovies(1);
                   break;
                case 1:
                   mCriteria = SortCriteria.POPULAR;
-                  getPopularMovies(mPage);
+                  getPopularMovies(1);
                   break;
                case 2:
                   mCriteria = SortCriteria.TOP_RATED;
-                  getTopRatedMovies(mPage);
+                  getTopRatedMovies(1);
                   break;
                case 3:
                   mCriteria = SortCriteria.UPCOMING;
-                  getUpcomingMovies(mPage);
+                  getUpcomingMovies(1);
                   break;
                case 4:
                   mCriteria = SortCriteria.FAVORITE;
-                  getFavoriteMovies(mPage);
+                  getFavoriteMovies(1);
                   break;
             }
          }
@@ -199,6 +199,7 @@ public class MainFragment extends Fragment {
    }
 
    private void reloadList(int page, List<CPMovie> movies) {
+      Log.d("NGUYEN", "reloadList(), page: " + page);
       int size = mAdapter.getItemCount();
       // if this is a new request, empty the current list
       if (page == 1 && size != 0) {
